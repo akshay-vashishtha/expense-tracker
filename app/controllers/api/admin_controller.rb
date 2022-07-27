@@ -1,14 +1,18 @@
 class Api::AdminController < ApplicationController
     before_action :authorize_admin, except: :create
-    # before_action :find_user, except: %i[create index]
+    before_action :find_user, except: %i[create index]
   
     def create 
         data = json_payload
-        admin = Admin.new(data) 
-        if admin.save
-            render json: {"message": "successfully created admin"}, status: 201
+        if Admin.exists?(user_handle: data["user_handle"])
+            render json: {"error": "user_handle already exits"}, status: :forbidden
         else 
-            render json: {"error": "invalid request" }, status: 501
+            admin = Admin.new(data) 
+            if admin.save
+                render json: {"message": "successfully created admin"}, status: :created
+            else 
+                render json: {"error": "invalid request" }, status: :forbidden
+            end
         end
     end
 
@@ -28,14 +32,19 @@ class Api::AdminController < ApplicationController
         render json: expenses
     end
 
-    def self.get_admin
-        user = Admin.all 
-        return user[0]
-    end
-
-    def self.add_employee(employee)
-        user = Api::AdminController.get_admin()
-        employee[:terminated] = false
+    def add_employee
+        data = json_payload
+        data[:terminated] = false
+        if Employee.exists?(:user_handle => data[:user_handle])
+            render json: {"error": "Already exits"}
+        else
+            employee = Employee.new(data)
+            if employee.save
+                render json: {"message": "employee created succesfully" }, status: 201
+            else
+                render json: {"error": "Please ensure you details are correct"}, status: 502
+            end
+        end
     end
 
     def approve_bill
@@ -66,7 +75,6 @@ class Api::AdminController < ApplicationController
     def terminate_employee
         data = json_payload
         employee = Employee.find_by(user_handle: data[:employee_handle])
-        puts json: employee
         begin 
             employee.update(terminated: true)
             render json: {  "message": "Employee #{employee.user_handle} has been terminated"   }, status: :ok
@@ -107,8 +115,10 @@ class Api::AdminController < ApplicationController
     end
 
     def find_user
-        @admin = Admin.find_by!(user_handle: params[:user_handle])
-        rescue ActiveRecord::RecordNotFound
-          render json: { errors: 'User not found' }, status: :not_found
-      end
+        begin
+            @admin = Admin.find_by!(user_handle: Current.user[:user_handle])
+        rescue ActiveRecord::RecordNotFound => e
+          render json: { errors: "Admin does not exists" }, status: :not_found
+        end
+    end
 end

@@ -5,5 +5,5 @@ class Employee < ApplicationRecord
   validates :user_handle, uniqueness: true
   validates :email, uniqueness: true, format:{with: /[^@\s]+@[^@\s]+/, message: "Must be valid Email Address"}
   has_secure_password
-  validates :password, length: { minimum: 3 }
+  validates :password_digest, length: { minimum: 3 }
 end

@@ -16,28 +16,31 @@ class Api::EmployeeController < ApplicationController
         end
     end
 
-    def create
+    def add_expense
+        authorize current_user, policy_class: EmployeePolicy
         data = json_payload
-        employee = Employee.new(data)
-        if Employee.exists?(:user_handle => "#{employee[:user_handle]}")
-            render json: {"error": "Already exits"}
-        else
-            Api::AdminController.add_employee(employee)
-            if employee.save
-                render json: {"message": "employee created succesfully" }, status: 201
-            else
-                render json: {"error": "Please ensure you details are correct"}, status: 502
-            end
+        expense = Expense.new(data)
+        expense.employee_id = current_user[:id]
+        expense.amount_claimed = 0
+        expense.amount_approved = 0
+        expense.status = "pending"
+        begin
+            expense.save
+            render json: { "message": "expense created succesfully", "expense": expense }, status: 201
+        rescue => e
+            render json: {"error": "Please ensure you entered correct employee id"}, status: 502
         end
     end
 
     def get_expense
+        authorize current_user, policy_class: EmployeePolicy
         @employee = Current.user
         @expenses = Expense.where(employee_id: @employee[:id])
         render :get_expense, status: 201
     end
 
     def comment_expense
+        authorize current_user, policy_class: EmployeePolicy
         data = json_payload
         @employee = Current.user
         obj = {
