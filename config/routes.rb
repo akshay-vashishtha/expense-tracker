@@ -14,7 +14,8 @@ Rails.application.routes.draw do
       get "reject_bill/:id", to: "admin#reject_bill"
       post "admin/comment", to: "admin#comment_expense"
       post "employee/comment", to: "employee#comment_expense"
-      post '/auth/login', to: 'authentication#login'
+      post '/auth/login_admin', to: 'authentication#login_admin'
+      post '/auth/login_employee', to: 'authentication#login_employee'
     # end
   end
 end

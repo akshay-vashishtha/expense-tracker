@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_26_114043) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_27_111149) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,7 +28,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_26_114043) do
     t.integer "amount"
     t.string "status"
     t.string "attachments"
-    t.decimal "invoice_number" #string 
+    t.decimal "invoice_number"
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -52,7 +52,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_26_114043) do
   end
 
   create_table "employees", force: :cascade do |t|
-    t.bigint "admin_id", null: false
     t.string "user_handle"
     t.string "email"
     t.boolean "terminated"
@@ -61,7 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_26_114043) do
     t.string "department"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["admin_id"], name: "index_employees_on_admin_id"
+    t.string "password_digest"
   end
 
   create_table "expenses", force: :cascade do |t|
@@ -78,7 +77,5 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_26_114043) do
   add_foreign_key "bills", "employees"
   add_foreign_key "bills", "expenses"
   add_foreign_key "comments", "expenses"
-  add_foreign_key "employees", "admins"
   add_foreign_key "expenses", "employees"
 end
-

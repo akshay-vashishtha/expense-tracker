@@ -1,5 +1,5 @@
 class Api::AdminController < ApplicationController
-    before_action :authorize_request, except: :create
+    before_action :authorize_admin, except: :create
     before_action :find_user, except: %i[create index]
   
     def create 
@@ -35,7 +35,7 @@ class Api::AdminController < ApplicationController
 
     def self.add_employee(employee)
         user = Api::AdminController.get_admin()
-        employee[:admin_id] = user.id
+        # employee[:admin_id] = user.id
         employee[:terminated] = false
     end
 

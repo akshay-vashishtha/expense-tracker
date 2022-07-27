@@ -5,11 +5,13 @@ class ApplicationController < ActionController::API
     end
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
-    def authorize_request
+    def authorize_admin
         header = request.headers['Authorization']
         header = header.split(' ').last if header
+        @decoded = JsonWebToken.decode(header)
+
         begin
-          @current_user = Admin.find_by(user_handle: @decoded[:user_handle])
+          Current.user = Admin.find_by(user_handle: @decoded[:user_handle])
         rescue ActiveRecord::RecordNotFound => e
           render json: { errors: e.message }, status: :unauthorized
         rescue JWT::DecodeError => e
@@ -17,13 +19,22 @@ class ApplicationController < ActionController::API
         end
     end
 
+    def authorize_employee
+      header = request.headers['Authorization']
+      header = header.split(' ').last if header
+      @decoded = JsonWebToken.decode(header)
+      begin
+        Current.user = Employee.find_by(user_handle: @decoded[:user_handle])
+      rescue ActiveRecord::RecordNotFound => e
+        render json: { errors: e.message }, status: :unauthorized
+      rescue JWT::DecodeError => e
+        render json: { errors: e.message }, status: :unauthorized
+      end
+  end
+
     private
     def user_not_authorized
       flash[:alert] = "You are not authorized to perform this action."
       redirect_back(fallback_location: root_path)
     end
-
-    # def current_user
-    #     current_user = Current.user
-    # end
 end

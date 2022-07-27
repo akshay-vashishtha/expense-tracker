@@ -1,12 +1,18 @@
 class Api::EmployeeController < ApplicationController
+    before_action :authorize_employee, except: :create
+
     def index 
         @users = Employee.all
         render json: @users
     end
 
     def show
-        @employee = Employee.find_by(user_handle: params[:id])
-        render :show
+        if Current.user.user_handle == params[:id]
+            @employee = Employee.find_by(user_handle: params[:id])
+            render :show
+        else
+            render json: {  "error": "Forbidden"   }, status: :forbidden 
+        end
     end
 
     def create

@@ -1,5 +1,4 @@
 class Admin < ApplicationRecord
     has_secure_password
-    validates :password,
-    length: { minimum: 3 }
+    validates :password, length: { minimum: 3 }
 end
