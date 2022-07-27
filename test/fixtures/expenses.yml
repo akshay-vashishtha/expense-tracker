@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  employee: one
+  amount_claimed: 1
+  amount_approved: 1
+  title: MyString
+  status: MyString
+
+two:
+  employee: two
+  amount_claimed: 1
+  amount_approved: 1
+  title: MyString
+  status: MyString

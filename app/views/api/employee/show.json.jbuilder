@@ -1,0 +1,1 @@
+json.(@employee, :user_handle, :email, :phone_no, :gender, :department)

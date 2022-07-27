@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  employee: one
+  expense: one
+  amount: 1
+  status: MyString
+  attachments: MyString
+  invoice_number: 9.99
+  title: MyString
+
+two:
+  employee: two
+  expense: two
+  amount: 1
+  status: MyString
+  attachments: MyString
+  invoice_number: 9.99
+  title: MyString

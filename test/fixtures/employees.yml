@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  admin: one
+  user_handle: MyString
+  email: MyString
+  terminated: false
+  phone_no: 9.99
+  gender: MyString
+  department: MyString
+
+two:
+  admin: two
+  user_handle: MyString
+  email: MyString
+  terminated: false
+  phone_no: 9.99
+  gender: MyString
+  department: MyString
