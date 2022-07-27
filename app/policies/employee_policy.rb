@@ -7,12 +7,10 @@ class EmployeePolicy < ApplicationPolicy
   # end
 
   def index? 
-    !@user[:terminated]?
+    !user[:terminated]
   end
 
-  def show? 
-    # puts "this point"
-    # puts json: @user
-    return !@employee["terminated"]
+  def show?
+    !user[:terminated]
   end
 end

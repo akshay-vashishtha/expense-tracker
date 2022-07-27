@@ -7,11 +7,12 @@ class Api::EmployeeController < ApplicationController
     end
 
     def show
+        authorize Current.user, policy_class: EmployeePolicy
         if Current.user.user_handle == params[:id]
             @employee = Employee.find_by(user_handle: params[:id])
             render :show
         else
-            render json: {  "error": "Forbidden"   }, status: :forbidden 
+            render json: {  "error": "Forbidden"  }, status: :forbidden 
         end
     end
 
@@ -31,19 +32,19 @@ class Api::EmployeeController < ApplicationController
     end
 
     def get_expense
-        @employee = Employee.find_by(user_handle: params[:id])
+        @employee = Current.user
         @expenses = Expense.where(employee_id: @employee[:id])
         render :get_expense, status: 201
     end
 
     def comment_expense
         data = json_payload
-        employee = Employee.find_by(user_handle: data["user_handle"])
+        @employee = Current.user
         obj = {
             :user => data["user_handle"],
             :expense_id => data["expense_id"],
             :description => data["description"],
-            :user_email => employee.email
+            :user_email => @employee.email
         }
         Api::CommentController.add_comment(obj)
     end

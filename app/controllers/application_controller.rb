@@ -1,16 +1,14 @@
 class ApplicationController < ActionController::API
-    include Pundit::Authorization
+    include Pundit
     def json_payload
         HashWithIndifferentAccess.new(JSON.parse(request.raw_post))
     end
-    rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     def authorize_admin
         header = request.headers['Authorization']
         header = header.split(' ').last if header
-        @decoded = JsonWebToken.decode(header)
-
         begin
+          @decoded = JsonWebToken.decode(header)
           Current.user = Admin.find_by(user_handle: @decoded[:user_handle])
         rescue ActiveRecord::RecordNotFound => e
           render json: { errors: e.message }, status: :unauthorized
@@ -22,8 +20,8 @@ class ApplicationController < ActionController::API
     def authorize_employee
       header = request.headers['Authorization']
       header = header.split(' ').last if header
-      @decoded = JsonWebToken.decode(header)
       begin
+        @decoded = JsonWebToken.decode(header)
         Current.user = Employee.find_by(user_handle: @decoded[:user_handle])
       rescue ActiveRecord::RecordNotFound => e
         render json: { errors: e.message }, status: :unauthorized
@@ -33,8 +31,7 @@ class ApplicationController < ActionController::API
   end
 
     private
-    def user_not_authorized
-      flash[:alert] = "You are not authorized to perform this action."
-      redirect_back(fallback_location: root_path)
-    end
+    def current_user
+      current_user = Current.user
+  end
 end

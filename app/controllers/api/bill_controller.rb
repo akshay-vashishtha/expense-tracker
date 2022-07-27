@@ -2,6 +2,7 @@ require 'uri'
 require 'net/http'
 
 class Api::BillController < ApplicationController
+    before_action :authorize_employee
     def index
         bills = Bill.all
         render json: bills

@@ -28,9 +28,7 @@ class Api::AuthenticationController < ApplicationController
         render json: { error: 'unauthorized' }, status: :unauthorized
       end
     end
-
-    private
-  
+      
     def login_params
       params.permit(:user_handle, :password)
     end

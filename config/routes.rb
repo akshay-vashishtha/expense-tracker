@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       post "employee/comment", to: "employee#comment_expense"
       post '/auth/login_admin', to: 'authentication#login_admin'
       post '/auth/login_employee', to: 'authentication#login_employee'
+      post 'admin/terminate_employee', to: 'admin#terminate_employee'
     # end
   end
 end

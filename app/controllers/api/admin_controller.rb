@@ -1,6 +1,6 @@
 class Api::AdminController < ApplicationController
     before_action :authorize_admin, except: :create
-    before_action :find_user, except: %i[create index]
+    # before_action :find_user, except: %i[create index]
   
     def create 
         data = json_payload
@@ -35,7 +35,6 @@ class Api::AdminController < ApplicationController
 
     def self.add_employee(employee)
         user = Api::AdminController.get_admin()
-        # employee[:admin_id] = user.id
         employee[:terminated] = false
     end
 
@@ -62,6 +61,18 @@ class Api::AdminController < ApplicationController
         bill.update(status: "Reject")
         mandate_expense(bill.expense_id)
         render json: {  "message": "bill has been rejected successfully"  }, status: 201
+    end
+
+    def terminate_employee
+        data = json_payload
+        employee = Employee.find_by(user_handle: data[:employee_handle])
+        puts json: employee
+        begin 
+            employee.update(terminated: true)
+            render json: {  "message": "Employee #{employee.user_handle} has been terminated"   }, status: :ok
+        rescue => e
+            render json: {  errors: e.message   }, status: :expectation_failed
+        end
     end
 
     def mandate_expense (expense_id)

@@ -1,4 +1,6 @@
 class Api::ExpenseController < ApplicationController
+    before_action :authorize_employee
+
     def index 
         expense = Expense.all
         render json: expense
