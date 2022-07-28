@@ -1,11 +1,6 @@
 class Api::ExpenseController < ApplicationController
     before_action :authorize_employee
 
-    def index 
-        expense = Expense.all
-        render json: expense
-    end
-
     def show
         @expense = Expense.find_by(id: params[:id])
         if @expense != nil

@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   namespace :api do 
-    resources :employee, except: %i[create]
+    resources :employee, except: %i[create index]
     resources :admin
-    resources :expense, except: %i[create]
-    resources :bill
+    resources :expense, except: %i[create index]
+    resources :bill, except: %i[index]
     resources :comment
     post "create_employee", to: "admin#add_employee"
     post "create_expense", to: "employee#add_expense"
@@ -13,10 +13,12 @@ Rails.application.routes.draw do
     get "list_pending_expense", to: "admin#list_pending_expense"
     get "approve_bill/:id", to: "admin#approve_bill"
     get "reject_bill/:id", to: "admin#reject_bill"
-    post "admin/comment", to: "admin#comment_expense"
-    post "employee/comment", to: "employee#comment_expense"
+    post "add_comment/:id", to: "comment#add_comment"
     post '/auth/login_admin', to: 'authentication#login_admin'
     post '/auth/login_employee', to: 'authentication#login_employee'
     post 'admin/terminate_employee', to: 'admin#terminate_employee'
+    get 'list_employee', to: 'admin#list_employee'
+    get 'list_expense', to: 'admin#list_expense'
+    get 'list_bills', to: 'admin#list_bills'
   end
 end

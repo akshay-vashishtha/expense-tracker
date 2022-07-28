@@ -1,9 +1,13 @@
 class EmployeePolicy < ApplicationPolicy
-  def index? 
+  def add_expense?
     !user[:terminated]
   end
 
-  def add_expense?
+  def get_expense?
+    !user[:terminated]
+  end
+
+  def comment_expense?
     !user[:terminated]
   end
 

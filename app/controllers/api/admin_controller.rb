@@ -21,6 +21,11 @@ class Api::AdminController < ApplicationController
         render json: admins
     end
 
+    def show 
+        admin = Admin.find_by(id: params[:id])
+        render json: admin
+    end
+
     def search_expense
         @employee = Employee.find_by(user_handle: params[:id])
         @expenses = Expense.where(employee_id: @employee[:id])
@@ -98,20 +103,19 @@ class Api::AdminController < ApplicationController
         end
     end
 
-    def comment_expense
-        data = json_payload
-        data["user"] = "admin"
-        data["user_email"] = "admin@yubi.com"
-        Api::CommentController.add_comment(data)
-        @expense = Expense.find_by(id: data["expense_id"])
-        @employee = Employee.find_by(id: @expense.employee_id)
-        user = {
-            :user_email => @employee.email,
-            :user_handle => @employee.user_handle,
-            :title => @expense.title
-        }
-        Api::CommentController.notify_user(user)
-        render json: { "message": "commented successfully" }, status: 201
+    def list_employee
+        employees = Employee.all
+        render json: employees
+    end
+
+    def list_expense
+        expenses = Expense.all
+        render json: expenses
+    end
+
+    def list_bills
+        bills = Bill.all
+        render json: bills
     end
 
     def find_user

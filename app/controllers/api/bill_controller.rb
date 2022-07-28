@@ -3,10 +3,6 @@ require 'net/http'
 
 class Api::BillController < ApplicationController
     before_action :authorize_employee
-    def index
-        bills = Bill.all
-        render json: bills
-    end
 
     def show 
         @bill = Bill.find(params[:id])
@@ -16,14 +12,20 @@ class Api::BillController < ApplicationController
     def create
         data = json_payload
         if invoice_validator (data["invoice_number"])
+            data["employee_id"] = current_user.id
+            data["status"] = "pending"
             bill = Bill.new(data)
             expense = Expense.find_by(id: data["expense_id"])
-            amount_claimed = expense.amount_claimed + bill.amount
-            if bill.save
-                expense.update(amount_claimed: amount_claimed)
-                render json: { "message": "bill created succesfully" }, status: 201
+            if expense
+                amount_claimed = expense.amount_claimed + bill.amount
+                if bill.save
+                    expense.update(amount_claimed: amount_claimed)
+                    render json: { "message": "bill created succesfully" }, status: 201
+                else
+                    render json: {"error": "Please ensure you entered correct employee id"}, status: 502
+                end
             else
-                render json: {"error": "Please ensure you entered correct employee id"}, status: 502
+                render json: {  "error": "expense id is not valid"  }, status: :not_found
             end
         else
             render json: {  "error": "invoice number is not valid "  }, status: 502
