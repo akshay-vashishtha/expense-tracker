@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_27_111149) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_28_082441) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,10 +25,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_27_111149) do
   create_table "bills", force: :cascade do |t|
     t.bigint "employee_id", null: false
     t.bigint "expense_id", null: false
-    t.integer "amount"
+    t.decimal "amount"
     t.string "status"
     t.string "attachments"
-    t.decimal "invoice_number"
+    t.integer "invoice_number"
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -55,7 +55,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_27_111149) do
     t.string "user_handle"
     t.string "email"
     t.boolean "terminated"
-    t.decimal "phone_no"
+    t.string "phone_no"
     t.string "gender"
     t.string "department"
     t.datetime "created_at", null: false
@@ -65,8 +65,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_27_111149) do
 
   create_table "expenses", force: :cascade do |t|
     t.bigint "employee_id", null: false
-    t.integer "amount_claimed"
-    t.integer "amount_approved"
+    t.decimal "amount_claimed"
+    t.decimal "amount_approved"
     t.string "title"
     t.string "status"
     t.datetime "created_at", null: false
