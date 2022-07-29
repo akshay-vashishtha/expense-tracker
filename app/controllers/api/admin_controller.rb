@@ -1,8 +1,8 @@
 class Api::AdminController < ApplicationController
     before_action :authorize_admin, except: :create
     before_action :find_user, except: %i[create index]
-  
-    def create 
+
+    def create
         data = json_payload
         if Admin.exists?(user_handle: data["user_handle"])
             render json: {"error": "user_handle already exits"}, status: :forbidden
@@ -21,14 +21,18 @@ class Api::AdminController < ApplicationController
         render json: admins
     end
 
-    def show 
-        admin = Admin.find_by(id: params[:id])
-        render json: admin
+    def show
+        begin
+            admin = Admin.find_by!(id: params[:id])
+            render json: admin
+        rescue ActiveRecordError::RecordNotFound => error
+            render json: {  "Error": error.message  }, status: :not_found
+        end
     end
 
     def search_expense
         @employee = Employee.find_by(user_handle: params[:id])
-        @expenses = Expense.where(employee_id: @employee[:id])
+        @expenses = @employee.expense
         render :search_expense, status: 201
     end
 
@@ -58,10 +62,10 @@ class Api::AdminController < ApplicationController
             render json: {  "message": "already processed"  }, status: 201
             return 
         end
-        expense = Expense.find_by(id: bill[:expense_id])
-        amount_approved = bill.amount + expense.amount_approved
+        # expense = Expense.find_by(id: bill[:expense_id])
+        amount_approved = bill.amount + bill.expense.amount_approved
         bill.update(status: "Approved")
-        expense.update(amount_approved: amount_approved)
+        bill.expense.update(amount_approved: amount_approved)
         mandate_expense(bill.expense_id)
         render json: {  "message": "bill has been approved successfully"  }, status: 201
     end
@@ -121,8 +125,8 @@ class Api::AdminController < ApplicationController
     def find_user
         begin
             @admin = Admin.find_by!(user_handle: Current.user[:user_handle])
-        rescue ActiveRecord::RecordNotFound => e
-          render json: { errors: "Admin does not exists" }, status: :not_found
+        rescue ActiveRecord::RecordNotFound => error
+          render json: { errors: error.message }, status: :not_found
         end
     end
 end

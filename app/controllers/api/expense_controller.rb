@@ -4,7 +4,7 @@ class Api::ExpenseController < ApplicationController
     def show
         @expense = Expense.find_by(id: params[:id])
         if @expense != nil
-            @bills = Bill.where(expense_id: params[:id])
+            @bills = @expense.bills
             render :show    
         else 
             render json: {  "error": "expense not found!!"  }, status: 404

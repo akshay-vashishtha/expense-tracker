@@ -36,8 +36,8 @@ class Api::EmployeeController < ApplicationController
     def get_expense
         begin 
             authorize current_user
-            @employee = Current.user
-            @expenses = Expense.where(employee_id: @employee[:id])
+            @employee = current_user
+            @expenses = @employee.expense
             render :get_expense, status: 201
         rescue Pundit::NotAuthorizedError => e
             render json: { "message": "#{e.message}" }, status: :unauthorized
